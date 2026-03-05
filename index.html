@@ -365,15 +365,16 @@ let map, arrGroup, bvGroup;
 function init(){
   // ── MAP SETUP ──
   map = L.map('map',{
-    center:[48.857,2.347], zoom:12,
+    center:[48.848,2.347], zoom:12,
     zoomControl:false, maxZoom:19, minZoom:11,
     tap:true,
+    paddingTopLeft:[0,100],
   });
 
-  // Light tile layer — Stadia Maps (no API key needed, CORS-friendly)
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    maxZoom:19,
-    attribution:'© OpenStreetMap',
+  // CartoDB Positron — works from any origin including GitHub Pages
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
+    subdomains:'abcd', maxZoom:19,
+    attribution:'© OpenStreetMap © CARTO',
   }).addTo(map);
 
   L.control.zoom({position:'bottomright'}).addTo(map);
@@ -385,18 +386,23 @@ function init(){
   // ── BUILD ARR LAYERS ──
   buildArrLayers();
 
-  // ── HEADER HEIGHT → map padding ──
+  // ── HEADER HEIGHT → push map content below header ──
   function padMap(){
-    const h=document.getElementById('hdr').offsetHeight;
-    map.setView(map.getCenter(),map.getZoom()); // refresh
-    // Move zoom control below header
-    const zc=document.querySelector('.leaflet-control-zoom');
-    if(zc) zc.style.marginBottom='8px';
-    document.getElementById('legend').style.top=(h+10)+'px';
-    document.getElementById('hint').style.bottom='20px';
+    const h = document.getElementById('hdr').offsetHeight;
+    // Push the map viewport so Paris center isn't hidden under the header
+    document.getElementById('map').style.top = '0';
+    map.invalidateSize();
+    // Offset center southward to compensate for header
+    const offset = map.containerPointToLatLng([
+      map.getSize().x / 2,
+      map.getSize().y / 2 + h / 2
+    ]);
+    map.panTo(offset, {animate:false});
+    document.getElementById('legend').style.top = (h + 10) + 'px';
+    document.getElementById('hint').style.bottom = '20px';
   }
-  padMap();
-  window.addEventListener('resize',padMap);
+  setTimeout(padMap, 150);
+  window.addEventListener('resize', padMap);
 
   // ── ZOOM EVENT → show/hide BV ──
   let prevZ=map.getZoom();
@@ -431,13 +437,13 @@ function buildArrLayers(){
     const [s,w,n,e]=ARR_BOX[arr];
     // Rectangle with rounded-ish appearance via fillOpacity
     const rect=L.rectangle([[s,w],[n,e]],{
-      color:'#fff', weight:2,
-      fillColor:'#ccc', fillOpacity:.65,
+      color:'#444', weight:2,
+      fillColor:'#3b82f6', fillOpacity:.55,
       className:'arr-rect',
     });
     rect.on('click',()=>openSheet(arr));
-    rect.on('mouseover',function(){ this.setStyle({fillOpacity:.84,weight:3}); });
-    rect.on('mouseout', function(){ this.setStyle({fillOpacity:isBVVisible()?.2:.65,weight:2}); });
+    rect.on('mouseover',function(){ this.setStyle({fillOpacity:.84,weight:3,color:'#111'}); });
+    rect.on('mouseout', function(){ this.setStyle({fillOpacity:isBVVisible()?.25:.55,weight:2,color:'#444'}); });
     rects[arr]=rect;
     arrGroup.addLayer(rect);
 
@@ -460,7 +466,7 @@ function buildArrLayers(){
 function isBVVisible(){ return map && map.getZoom()>=14; }
 
 function updateArrOpacity(){
-  const op=isBVVisible()?.2:.65;
+  const op = isBVVisible() ? .25 : .55;
   for(let arr=1;arr<=20;arr++){
     if(rects[arr]) rects[arr].setStyle({fillOpacity:op});
   }
