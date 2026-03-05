@@ -1,0 +1,79 @@
+# Paris·Vote — Élections Municipales par bureau de vote
+
+Carte interactive des résultats des élections municipales de Paris (2014 & 2020), par arrondissement et bureau de vote.
+
+## 🚀 Déploiement GitHub Pages (5 minutes)
+
+### Étape 1 — Créer le dépôt
+
+1. Va sur **[github.com](https://github.com)** → connecte-toi (ou crée un compte gratuit)
+1. Clique sur **“New repository”** (bouton vert en haut à droite)
+1. Nom du dépôt : `paris-vote` (ou ce que tu veux)
+1. Laisse tout par défaut, clique **“Create repository”**
+
+### Étape 2 — Uploader le fichier
+
+1. Dans le nouveau dépôt, clique **“uploading an existing file”**
+1. Glisse-dépose le fichier **`index.html`** dans la zone
+1. En bas, clique **“Commit changes”**
+
+### Étape 3 — Activer GitHub Pages
+
+1. Clique sur **Settings** (onglet en haut du dépôt)
+1. Dans le menu gauche → **Pages**
+1. Sous “Branch”, sélectionne **`main`** puis **`/ (root)`**
+1. Clique **Save**
+
+### Étape 4 — C’est en ligne ! 🎉
+
+Après ~1 minute, ton app est accessible à :
+
+```
+https://[ton-username].github.io/paris-vote/
+```
+
+Partage cette URL sur iPhone, Android, n’importe où.
+
+-----
+
+## 📱 Utilisation
+
+|Geste                 |Action                     |
+|----------------------|---------------------------|
+|Tap arrondissement    |Ouvre le détail            |
+|Pincer / scroll       |Zoomer                     |
+|Glisser               |Naviguer                   |
+|Zoom ≥ 14             |Affiche les bureaux de vote|
+|Swipe bas sur le panel|Réduire                    |
+
+## 🗳️ Fonctionnalités
+
+- **2014 / 2020** — bascule entre les deux élections
+- **1er / 2e tour** — sélection du tour
+- **Candidats / Blocs** — colorisation par candidat ou bloc politique
+- **Animation 2014→2020** — visualise les bascules politiques
+- **Mode Live** — simulation de résultats en temps réel (à brancher sur l’API Ministère le soir J)
+
+## 🔌 Données réelles
+
+Les données sont actuellement simulées. Pour brancher les vraies données :
+
+**Résultats** :
+
+```
+https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/
+  elections-municipales-2020-2emetour/records?limit=100
+```
+
+**Géométries des bureaux de vote** :
+
+```
+https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/
+  secteurs-des-bureaux-de-vote/records?limit=900
+```
+
+**Résultats live (soir du vote)** :
+
+```
+https://www.resultats-elections.interieur.gouv.fr/
+```
